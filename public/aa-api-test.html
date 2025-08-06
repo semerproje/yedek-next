@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AA API Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
+        .test-button { 
+            display: inline-block; margin: 10px; padding: 15px 20px; 
+            background: #007bff; color: white; text-decoration: none; 
+            border-radius: 5px; font-weight: bold;
+        }
+        .test-button:hover { background: #0056b3; }
+        .info { background: #e9ecef; padding: 15px; border-radius: 5px; margin: 10px 0; }
+        .success { background: #d4edda; color: #155724; }
+        .warning { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 AA API Test Paneli</h1>
+        
+        <div class="info">
+            <strong>AA API Credentials:</strong><br>
+            Username: 3010229<br>
+            Password: 8vWhT6Vt<br>
+            Base URL: https://api.aa.com.tr/abone
+        </div>
+
+        <h2>📊 API Test Endpoint'leri</h2>
+        
+        <a href="/api/test-aa-fixed?action=connection" class="test-button">
+            🔌 AA API Bağlantı Testi
+        </a>
+        
+        <a href="/api/test-aa-fixed?action=firebase" class="test-button">
+            🔥 Firebase Bağlantı Testi
+        </a>
+        
+        <a href="/api/test-aa-fixed?action=fetch&limit=5" class="test-button">
+            📰 Haber Çekme (5 adet)
+        </a>
+        
+        <a href="/api/test-aa-fixed?action=save&limit=3" class="test-button">
+            💾 Firebase Kaydetme
+        </a>
+        
+        <a href="/api/test-aa-fixed?action=full" class="test-button">
+            🚀 Tam Test
+        </a>
+
+        <h2>📋 Test Sonuçları</h2>
+        <div id="results" class="info">
+            Test sonuçları burada görünecek...
+        </div>
+
+        <h2>ℹ️ AA API Bilgileri</h2>
+        <div class="info">
+            <h3>Test Endpoint'leri:</h3>
+            <ul>
+                <li><strong>/connection</strong> - AA API bağlantı testi</li>
+                <li><strong>/firebase</strong> - Firebase bağlantı testi</li>
+                <li><strong>/fetch</strong> - Haber çekme testi</li>
+                <li><strong>/save</strong> - Firebase kaydetme testi</li>
+                <li><strong>/full</strong> - Tam sistem testi</li>
+            </ul>
+            
+            <h3>Güncellenmiş Endpoint'ler:</h3>
+            <ul>
+                <li><strong>/subscription</strong> - Abonelik bilgileri (GET)</li>
+                <li><strong>/discover/tr_TR</strong> - Filtre seçenekleri (GET)</li>
+                <li><strong>/search</strong> - Haber arama (POST)</li>
+            </ul>
+            
+            <h3>Search Parametreleri:</h3>
+            <ul>
+                <li><strong>start_date:</strong> "*" (tüm tarihler)</li>
+                <li><strong>end_date:</strong> "NOW" (şu ana kadar)</li>
+                <li><strong>filter_type:</strong> "1" (text haberleri)</li>
+                <li><strong>filter_language:</strong> "1" (Türkçe)</li>
+                <li><strong>limit:</strong> Maksimum haber sayısı</li>
+            </ul>
+            
+            <div class="warning">
+                <strong>⚠️ Önemli:</strong> API çağrıları arasında 500ms bekleme zorunludur!
+            </div>
+        </div>
+
+        <h2>🔧 Manuel Test</h2>
+        <div class="info">
+            <button onclick="testAPI()" class="test-button">Manuel API Test</button>
+            <div id="manual-results" style="margin-top: 10px;"></div>
+        </div>
+    </div>
+
+    <script>
+        async function testAPI() {
+            const resultsDiv = document.getElementById('manual-results');
+            resultsDiv.innerHTML = 'Test başlıyor...';
+            
+            try {
+                // Önce Firebase test
+                const firebaseResponse = await fetch('/api/test-aa-fixed?action=firebase');
+                const firebaseData = await firebaseResponse.json();
+                
+                // Sonra AA API test
+                const aaResponse = await fetch('/api/test-aa-fixed?action=connection');
+                const aaData = await aaResponse.json();
+                
+                resultsDiv.innerHTML = `
+                    <div class="${firebaseData.result.success ? 'success' : 'warning'} info">
+                        <strong>🔥 Firebase:</strong> ${firebaseData.result.message}<br>
+                        <strong>Durum:</strong> ${firebaseData.result.success ? '✅ Başarılı' : '❌ Başarısız'}
+                    </div>
+                    <div class="${aaData.result.success ? 'success' : 'warning'} info">
+                        <strong>📡 AA API:</strong> ${aaData.result.message}<br>
+                        <strong>Endpoint:</strong> ${aaData.result.endpoint || 'N/A'}<br>
+                        <strong>Durum:</strong> ${aaData.result.success ? '✅ Başarılı' : '❌ Başarısız'}
+                    </div>
+                `;
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="warning info">
+                        <strong>Hata:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

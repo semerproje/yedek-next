@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Firebase News Test</title>
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js';
+        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js';
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBKwVLWLTgLLfs8V0ptEvwywGoIwxm430A",
+          authDomain: "haber-a62cf.firebaseapp.com",
+          projectId: "haber-a62cf",
+          storageBucket: "haber-a62cf.firebasestorage.app",
+          messagingSenderId: "651640696907",
+          appId: "1:651640696907:web:d7c012c1280a08e0c69dce",
+        };
+
+        async function testFirebase() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+                const newsCollection = collection(db, 'news');
+                const snapshot = await getDocs(newsCollection);
+                
+                document.getElementById('result').innerHTML = 
+                    `✅ Firebase bağlantısı başarılı! ${snapshot.size} haber bulundu`;
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    document.getElementById('newsList').innerHTML += 
+                        `<li>${data.title} - ${data.category}</li>`;
+                });
+            } catch (error) {
+                document.getElementById('result').innerHTML = 
+                    `❌ Firebase hatası: ${error.message}`;
+            }
+        }
+
+        window.addEventListener('load', testFirebase);
+    </script>
+</head>
+<body>
+    <h1>Firebase News Test</h1>
+    <div id="result">🔄 Test çalışıyor...</div>
+    <h2>Haberler:</h2>
+    <ul id="newsList"></ul>
+</body>
+</html>

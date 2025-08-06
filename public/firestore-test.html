@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firestore Connection Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-button {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            transition: transform 0.2s;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+        }
+        .result {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            border-left: 5px solid #28a745;
+            background: #d4edda;
+        }
+        .error {
+            border-left: 5px solid #dc3545;
+            background: #f8d7da;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 Firestore Connection Test</h1>
+        
+        <div style="text-align: center;">
+            <button class="test-button" onclick="testFirestoreGet()">
+                <span id="getLoading" style="display: none;" class="loading"></span>
+                Test Firestore GET
+            </button>
+            
+            <button class="test-button" onclick="testFirestorePost()">
+                <span id="postLoading" style="display: none;" class="loading"></span>
+                Test Firestore POST
+            </button>
+            
+            <button class="test-button" onclick="testConfig()">
+                Test Firebase Config
+            </button>
+        </div>
+
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        function showResult(data, isSuccess = true) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.className = `result ${isSuccess ? 'success' : 'error'}`;
+            resultDiv.textContent = JSON.stringify(data, null, 2);
+        }
+
+        function hideLoading(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function showLoading(id) {
+            document.getElementById(id).style.display = 'inline-block';
+        }
+
+        async function testFirestoreGet() {
+            showLoading('getLoading');
+            try {
+                console.log('🔥 Testing Firestore GET...');
+                
+                const response = await fetch('/api/test-firestore-simple', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                console.log('Response:', data);
+
+                if (response.ok) {
+                    showResult({
+                        status: 'SUCCESS',
+                        message: 'Firestore GET test completed',
+                        ...data
+                    }, true);
+                } else {
+                    showResult({
+                        status: 'ERROR',
+                        message: 'Firestore GET test failed',
+                        ...data
+                    }, false);
+                }
+            } catch (error) {
+                console.error('Test error:', error);
+                showResult({
+                    status: 'ERROR',
+                    message: 'Network error during GET test',
+                    error: error.message
+                }, false);
+            }
+            hideLoading('getLoading');
+        }
+
+        async function testFirestorePost() {
+            showLoading('postLoading');
+            try {
+                console.log('🔥 Testing Firestore POST...');
+                
+                const testData = {
+                    title: 'Manual Test News',
+                    content: 'Bu manuel bir test haberidir',
+                    category: 'test',
+                    source: 'MANUAL_TEST',
+                    timestamp: new Date().toISOString()
+                };
+
+                const response = await fetch('/api/test-firestore-simple', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ testData })
+                });
+
+                const data = await response.json();
+                console.log('Response:', data);
+
+                if (response.ok) {
+                    showResult({
+                        status: 'SUCCESS',
+                        message: 'Firestore POST test completed',
+                        ...data
+                    }, true);
+                } else {
+                    showResult({
+                        status: 'ERROR',
+                        message: 'Firestore POST test failed',
+                        ...data
+                    }, false);
+                }
+            } catch (error) {
+                console.error('Test error:', error);
+                showResult({
+                    status: 'ERROR',
+                    message: 'Network error during POST test',
+                    error: error.message
+                }, false);
+            }
+            hideLoading('postLoading');
+        }
+
+        function testConfig() {
+            const config = {
+                hasFirebaseConfig: typeof window !== 'undefined',
+                userAgent: navigator.userAgent,
+                timestamp: new Date().toISOString()
+            };
+
+            showResult({
+                status: 'INFO',
+                message: 'Client-side configuration check',
+                config
+            }, true);
+        }
+
+        // Sayfa yüklendiğinde
+        window.addEventListener('load', () => {
+            console.log('🚀 Firestore test page loaded');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+// Simple AA News Test
+async function testAANews() {
+  try {
+    console.log('🔍 Testing AA News API via Next.js...');
+    
+    const response = await fetch('http://localhost:3000/api/aa-news/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        category: 'genel',
+        limit: 10
+      })
+    });
+    
+    console.log('📊 Response status:', response.status);
+    
+    if (!response.ok) {
+      console.log('❌ Response not OK:', response.statusText);
+      const errorText = await response.text();
+      console.log('📄 Error response:', errorText);
+      return;
+    }
+    
+    const data = await response.json();
+    console.log('✅ Response received');
+    console.log('📊 Data structure:', {
+      success: data.success,
+      newsCount: data.news?.length || 0,
+      totalAvailable: data.totalAvailable,
+      usedUrl: data.usedUrl
+    });
+    
+    if (data.success && data.news && data.news.length > 0) {
+      console.log('🎉 SUCCESS! Found', data.news.length, 'news items');
+      console.log('📝 First news item:');
+      console.log('  - ID:', data.news[0].id);
+      console.log('  - Title:', data.news[0].title);
+      console.log('  - Date:', data.news[0].publishedAt);
+      console.log('  - Category:', data.news[0].category);
+    } else {
+      console.log('❌ No news found or API failed');
+      console.log('📄 Full response:', JSON.stringify(data, null, 2));
+    }
+    
+  } catch (error) {
+    console.error('❌ Test failed:', error);
+  }
+}
+
+testAANews();

@@ -1,0 +1,13 @@
+// Firebase Firestore Security Rules for Ultra Premium AA Manager System
+// Development Rules - Geliştirme ortamı için tüm işlemlere izin verir
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // DEVELOPMENT MODE - Tüm koleksiyonlara tam erişim
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AA Auto Crawler Test</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .button { padding: 10px 20px; margin: 5px; border: none; border-radius: 4px; cursor: pointer; }
+        .primary { background: #007bff; color: white; }
+        .success { background: #28a745; color: white; }
+        .danger { background: #dc3545; color: white; }
+        .info { background: #17a2b8; color: white; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .status.success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .status.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .status.info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+        .news-item { padding: 10px; margin: 5px 0; border: 1px solid #eee; border-radius: 4px; }
+        .news-title { font-weight: bold; color: #333; }
+        .news-meta { font-size: 12px; color: #666; margin: 5px 0; }
+        .news-content { margin: 10px 0; line-height: 1.4; }
+        .form-group { margin: 10px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="number"] { padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 100px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 AA Otomatik Haber Çekici</h1>
+        
+        <!-- Durum Paneli -->
+        <div class="section">
+            <h2>📊 Sistem Durumu</h2>
+            <div id="status-info" class="status info">Durum yükleniyor...</div>
+            <button onclick="checkStatus()" class="button info">Durumu Yenile</button>
+        </div>
+
+        <!-- Otomatik Çekim Kontrolü -->
+        <div class="section">
+            <h2>⚙️ Otomatik Çekim Kontrolü</h2>
+            <div class="form-group">
+                <label>Çekim Aralığı (dakika):</label>
+                <input type="number" id="interval" value="30" min="1" max="1440">
+                <small> (1 dakika - 24 saat arası)</small>
+            </div>
+            <button onclick="startAutoCrawl()" class="button success">🚀 Otomatik Çekimi Başlat</button>
+            <button onclick="stopAutoCrawl()" class="button danger">⏹️ Otomatik Çekimi Durdur</button>
+            <button onclick="manualCrawl()" class="button primary">🔄 Manuel Çekim Yap</button>
+            <button onclick="updateInterval()" class="button info">🔧 Aralığı Güncelle</button>
+        </div>
+
+        <!-- Test Alanı -->
+        <div class="section">
+            <h2>🧪 Test Araçları</h2>
+            <button onclick="testAAAPI()" class="button info">📡 AA API Test</button>
+            <button onclick="testFirestore()" class="button info">🔥 Firestore Test</button>
+            <button onclick="testDetailFetch()" class="button info">📰 Haber Detay Test</button>
+            <div id="test-results"></div>
+        </div>
+
+        <!-- Son Çekilen Haberler -->
+        <div class="section">
+            <h2>📰 Son Çekilen Haberler</h2>
+            <button onclick="loadLatestNews()" class="button primary">Son Haberleri Yükle</button>
+            <div id="latest-news"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000/api';
+
+        async function showMessage(message, type = 'info') {
+            const statusDiv = document.getElementById('status-info');
+            statusDiv.className = `status ${type}`;
+            statusDiv.innerHTML = message;
+        }
+
+        async function checkStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/auto-news-crawler`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const status = data.status;
+                    const nextRun = status.nextRun ? new Date(status.nextRun).toLocaleString('tr-TR') : 'Yok';
+                    const lastRun = status.lastRun ? new Date(status.lastRun).toLocaleString('tr-TR') : 'Hiç';
+                    
+                    showMessage(`
+                        <strong>Otomatik Çekim:</strong> ${status.enabled ? '🟢 Aktif' : '🔴 Pasif'}<br>
+                        <strong>Aralık:</strong> ${status.intervalMinutes} dakika<br>
+                        <strong>Çalışıyor:</strong> ${status.isCrawling ? '🔄 Evet' : '⏸️ Hayır'}<br>
+                        <strong>Son Çalışma:</strong> ${lastRun}<br>
+                        <strong>Sonraki Çalışma:</strong> ${nextRun}<br>
+                        <strong>Toplam Haber:</strong> ${status.totalNews}<br>
+                        <strong>Hatalar:</strong> ${status.errors.length > 0 ? status.errors.join('<br>') : 'Yok'}
+                    `, 'success');
+                } else {
+                    showMessage(`Hata: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showMessage(`Durum kontrol hatası: ${error.message}`, 'error');
+            }
+        }
+
+        async function startAutoCrawl() {
+            try {
+                const interval = parseInt(document.getElementById('interval').value);
+                const response = await fetch(`${API_BASE}/auto-news-crawler`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'start', intervalMinutes: interval })
+                });
+                
+                const data = await response.json();
+                showMessage(data.message, data.success ? 'success' : 'error');
+                if (data.success) setTimeout(checkStatus, 1000);
+            } catch (error) {
+                showMessage(`Başlatma hatası: ${error.message}`, 'error');
+            }
+        }
+
+        async function stopAutoCrawl() {
+            try {
+                const response = await fetch(`${API_BASE}/auto-news-crawler`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'stop' })
+                });
+                
+                const data = await response.json();
+                showMessage(data.message, data.success ? 'success' : 'error');
+                if (data.success) setTimeout(checkStatus, 1000);
+            } catch (error) {
+                showMessage(`Durdurma hatası: ${error.message}`, 'error');
+            }
+        }
+
+        async function manualCrawl() {
+            try {
+                showMessage('🔄 Manuel çekim başlatılıyor...', 'info');
+                const response = await fetch(`${API_BASE}/auto-news-crawler`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'manual' })
+                });
+                
+                const data = await response.json();
+                showMessage(data.message, data.success ? 'success' : 'error');
+                if (data.success) {
+                    setTimeout(checkStatus, 2000);
+                    setTimeout(loadLatestNews, 3000);
+                }
+            } catch (error) {
+                showMessage(`Manuel çekim hatası: ${error.message}`, 'error');
+            }
+        }
+
+        async function updateInterval() {
+            try {
+                const interval = parseInt(document.getElementById('interval').value);
+                const response = await fetch(`${API_BASE}/auto-news-crawler`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'update-interval', intervalMinutes: interval })
+                });
+                
+                const data = await response.json();
+                showMessage(data.message, data.success ? 'success' : 'error');
+                if (data.success) setTimeout(checkStatus, 1000);
+            } catch (error) {
+                showMessage(`Aralık güncelleme hatası: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAAAPI() {
+            try {
+                document.getElementById('test-results').innerHTML = 'AA API test ediliyor...';
+                const response = await fetch(`${API_BASE}/aa-news/search`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ q: '', limit: 5 })
+                });
+                
+                const data = await response.json();
+                document.getElementById('test-results').innerHTML = `
+                    <div class="status ${data.success ? 'success' : 'error'}">
+                        <strong>AA API Test:</strong> ${data.success ? '✅ Başarılı' : '❌ Başarısız'}<br>
+                        ${data.success ? `${data.count} haber bulundu` : data.message}
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('test-results').innerHTML = `
+                    <div class="status error">AA API Test Hatası: ${error.message}</div>
+                `;
+            }
+        }
+
+        async function testFirestore() {
+            try {
+                document.getElementById('test-results').innerHTML = 'Firestore test ediliyor...';
+                const response = await fetch(`${API_BASE}/test-firestore-verify`);
+                const data = await response.json();
+                
+                document.getElementById('test-results').innerHTML = `
+                    <div class="status ${data.success ? 'success' : 'error'}">
+                        <strong>Firestore Test:</strong> ${data.success ? '✅ Başarılı' : '❌ Başarısız'}<br>
+                        ${data.success ? `${data.count} haber bulundu` : data.message}
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('test-results').innerHTML = `
+                    <div class="status error">Firestore Test Hatası: ${error.message}</div>
+                `;
+            }
+        }
+
+        async function testDetailFetch() {
+            try {
+                document.getElementById('test-results').innerHTML = 'Haber detay test ediliyor...';
+                const response = await fetch(`${API_BASE}/aa-news/detail`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: 'https://www.aa.com.tr/tr/haber/aa:text:20250802:38733833' })
+                });
+                
+                const data = await response.json();
+                document.getElementById('test-results').innerHTML = `
+                    <div class="status ${data.success ? 'success' : 'error'}">
+                        <strong>Haber Detay Test:</strong> ${data.success ? '✅ Başarılı' : '❌ Başarısız'}<br>
+                        ${data.success ? `Başlık: ${data.article.title}<br>İçerik: ${data.article.content.substring(0, 100)}...` : data.message}
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('test-results').innerHTML = `
+                    <div class="status error">Detay Test Hatası: ${error.message}</div>
+                `;
+            }
+        }
+
+        async function loadLatestNews() {
+            try {
+                document.getElementById('latest-news').innerHTML = 'Son haberler yükleniyor...';
+                const response = await fetch(`${API_BASE}/test-firestore-verify`);
+                const data = await response.json();
+                
+                if (data.success && data.news) {
+                    const newsHtml = data.news.slice(0, 10).map(news => `
+                        <div class="news-item">
+                            <div class="news-title">${news.title}</div>
+                            <div class="news-meta">
+                                📅 ${new Date(news.createdAt).toLocaleString('tr-TR')} | 
+                                🏷️ ${news.category} | 
+                                📰 ${news.type} |
+                                🆔 ${news.docId}
+                            </div>
+                            ${news.content ? `<div class="news-content">${news.content.substring(0, 200)}...</div>` : ''}
+                            ${news.images && news.images.length > 0 ? `<div>🖼️ ${news.images.length} görsel</div>` : ''}
+                        </div>
+                    `).join('');
+                    
+                    document.getElementById('latest-news').innerHTML = newsHtml;
+                } else {
+                    document.getElementById('latest-news').innerHTML = `
+                        <div class="status error">Haber yüklenemedi: ${data.message}</div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('latest-news').innerHTML = `
+                    <div class="status error">Haber yükleme hatası: ${error.message}</div>
+                `;
+            }
+        }
+
+        // Sayfa yüklendiğinde durum kontrolü yap
+        window.onload = function() {
+            checkStatus();
+            loadLatestNews();
+            
+            // Her 30 saniyede bir durum güncelle
+            setInterval(checkStatus, 30000);
+        };
+    </script>
+</body>
+</html>

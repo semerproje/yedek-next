@@ -1,0 +1,87 @@
+// Manual fetch test with Firestore save
+async function testManualFetchWithSave() {
+  try {
+    console.log('🔍 Testing manual fetch with Firestore save...');
+    
+    // Step 1: Fetch news from AA API
+    console.log('📡 Step 1: Fetching news from AA API...');
+    const response = await fetch('http://localhost:3000/api/aa-news/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        category: 'genel',
+        limit: 3
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`AA API failed: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log(`✅ Fetched ${data.news?.length || 0} news items`);
+    
+    if (!data.news || data.news.length === 0) {
+      console.log('❌ No news items to save');
+      return;
+    }
+    
+    // Step 2: Save each news item to Firestore
+    console.log('💾 Step 2: Saving news items to Firestore...');
+    let savedCount = 0;
+    let duplicateCount = 0;
+    let errorCount = 0;
+    
+    for (const newsItem of data.news.slice(0, 3)) { // Only test with first 3
+      try {
+        console.log(`📰 Saving: ${newsItem.title.substring(0, 50)}...`);
+        
+        const saveResponse = await fetch('http://localhost:3000/api/test-firestore-save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newsItem)
+        });
+        
+        if (saveResponse.ok) {
+          const saveResult = await saveResponse.json();
+          console.log(`✅ Saved with ID: ${saveResult.docId}`);
+          savedCount++;
+        } else {
+          const errorText = await saveResponse.text();
+          console.log(`❌ Save failed: ${errorText}`);
+          errorCount++;
+        }
+        
+        // Small delay between saves
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+      } catch (saveError) {
+        console.error(`❌ Save error for ${newsItem.id}:`, saveError);
+        errorCount++;
+      }
+    }
+    
+    console.log('\n📊 Manual fetch with save completed:');
+    console.log(`📰 Total fetched: ${data.news.length}`);
+    console.log(`✅ Successfully saved: ${savedCount}`);
+    console.log(`⚠️ Duplicates skipped: ${duplicateCount}`);
+    console.log(`❌ Errors: ${errorCount}`);
+    
+    // Step 3: Verify saved items
+    console.log('\n🔍 Step 3: Verifying saved items...');
+    const verifyResponse = await fetch('http://localhost:3000/api/test-firestore-verify');
+    if (verifyResponse.ok) {
+      const verifyData = await verifyResponse.json();
+      console.log(`📊 Total news in Firestore: ${verifyData.count}`);
+    }
+    
+  } catch (error) {
+    console.error('❌ Manual fetch test failed:', error);
+  }
+}
+
+testManualFetchWithSave();

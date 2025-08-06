@@ -1,0 +1,8 @@
+{
+  "categories": [1, 2],
+  "content_types": [1],
+  "limit": 5,
+  "ai_enhance": true,
+  "newsml_format": true,
+  "start_date": "2025-08-04"
+}

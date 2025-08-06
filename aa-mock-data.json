@@ -1,0 +1,48 @@
+{
+  "success": true,
+  "news": [
+    {
+      "id": "mock-1",
+      "title": "Test Haberi - Teknoloji Alanında Yeni Gelişmeler",
+      "brief": "Teknoloji sektöründe yaşanan son gelişmeler ve yenilikler hakkında detaylı bilgiler.",
+      "category": "teknoloji",
+      "language": "tr",
+      "type": "news",
+      "priority": 1,
+      "publishedAt": "2025-08-02T23:05:35.194Z",
+      "updatedAt": "2025-08-02T23:05:35.195Z",
+      "source": "AA (Mock)",
+      "url": "https://www.aa.com.tr/mock-news-1"
+    },
+    {
+      "id": "mock-2",
+      "title": "Spor Haberleri - Futbol Maçları",
+      "brief": "Bu hafta oynanacak önemli futbol maçları ve takım performansları.",
+      "category": "spor",
+      "language": "tr",
+      "type": "news",
+      "priority": 2,
+      "publishedAt": "2025-08-02T22:05:35.195Z",
+      "updatedAt": "2025-08-02T22:05:35.195Z",
+      "source": "AA (Mock)",
+      "url": "https://www.aa.com.tr/mock-news-2"
+    },
+    {
+      "id": "mock-3",
+      "title": "Ekonomi - Piyasa Analizi",
+      "brief": "Güncel ekonomik veriler ve piyasa analizi raporu.",
+      "category": "ekonomi",
+      "language": "tr",
+      "type": "news",
+      "priority": 1,
+      "publishedAt": "2025-08-02T21:05:35.195Z",
+      "updatedAt": "2025-08-02T21:05:35.195Z",
+      "source": "AA (Mock)",
+      "url": "https://www.aa.com.tr/mock-news-3"
+    }
+  ],
+  "count": 3,
+  "totalAvailable": 3,
+  "usedUrl": "mock-data",
+  "note": "Mock data - AA API authentication failed"
+}

@@ -1,0 +1,47 @@
+// Firebase Firestore Security Rules - Development Mode
+// UYARI: Bu kurallar sadece geliştirme amaçlıdır!
+// Production'da daha güvenli kurallar kullanın.
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // DEVELOPMENT MODE - Tüm okuma/yazma izinleri açık
+    // TODO: Production'da bu kuralları kaldırın!
+    match /{document=**} {
+      allow read, write: if true;
+    }
+    
+    // Production için hazır kurallar (şu anda kapalı):
+    /*
+    // Homepage Modules Collection
+    match /homepage_modules/{moduleId} {
+      allow read, write: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow read: if resource.data.active == true;
+    }
+    
+    // Categories Collection
+    match /categories/{categoryId} {
+      allow read, write: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow read: if resource.data.active == true;
+    }
+    
+    // News Collection
+    match /news/{newsId} {
+      allow read, write: if request.auth != null && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'editor');
+      allow read: if resource.data.status == 'published';
+    }
+    
+    // Users Collection
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    */
+  }
+}

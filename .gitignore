@@ -39,3 +39,25 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Firebase
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+firebase-debug.*.log
+
+# Test files (optional - you can commit these if needed)
+# test-*.js
+# test-*.mjs
+# *-test.js
+# *-test.mjs
+# debug-*.js
+
+# Documentation generated files
+# *.md files are usually committed, but you can uncomment below if needed
+# AA_*.md
+# SYSTEM_*.md
+# PROJECT_*.md
+
+# External repositories
+nethaberler/

@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultra Premium AA Crawler Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .test-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+        }
+        
+        .test-section h2 {
+            color: #1f2937;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 5px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .button.secondary {
+            background: linear-gradient(45deg, #f59e0b, #ef4444);
+        }
+        
+        .button.success {
+            background: linear-gradient(45deg, #10b981, #059669);
+        }
+        
+        .button.info {
+            background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+        }
+        
+        .result {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            white-space: pre-wrap;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+            border-left: 4px solid #667eea;
+        }
+        
+        .result.success {
+            background: #d1fae5;
+            border-left-color: #10b981;
+            color: #064e3b;
+        }
+        
+        .result.error {
+            background: #fee2e2;
+            border-left-color: #ef4444;
+            color: #7f1d1d;
+        }
+        
+        .result.warning {
+            background: #fef3c7;
+            border-left-color: #f59e0b;
+            color: #78350f;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            color: #1f2937;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card p {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .config-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .config-group {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .config-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .config-group input,
+        .config-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            border: 1px solid #d1d5db;
+            font-size: 12px;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Ultra Premium AA Crawler</h1>
+            <p>Gelişmiş Anadolu Ajansı Haber Çekim ve Test Sistemi</p>
+        </div>
+
+        <!-- API Status Test -->
+        <div class="test-section">
+            <h2>🔧 API Durum Testi</h2>
+            <p>Ultra Premium AA Crawler API'sinin durumunu kontrol edin.</p>
+            <div style="margin-top: 15px;">
+                <button class="button info" onclick="testAPIStatus()">
+                    <span id="statusLoading" style="display: none;" class="loading"></span>
+                    API Durumu
+                </button>
+                <button class="button secondary" onclick="testAAConnection()">
+                    <span id="connectionLoading" style="display: none;" class="loading"></span>
+                    AA Bağlantısı
+                </button>
+                <button class="button info" onclick="debugAAAPI()">
+                    <span id="debugLoading" style="display: none;" class="loading"></span>
+                    🧪 Debug AA API
+                </button>
+                <button class="button secondary" onclick="simpleAATest()">
+                    <span id="simpleLoading" style="display: none;" class="loading"></span>
+                    🔬 Simple AA Test
+                </button>
+            </div>
+        </div>
+
+        <!-- Crawler Configuration -->
+        <div class="test-section">
+            <h2>⚙️ Crawler Yapılandırması</h2>
+            <div class="config-section">
+                <div class="config-group">
+                    <label>📋 Kategoriler</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cat1" value="1" checked>
+                            <label for="cat1">Genel</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cat2" value="2" checked>
+                            <label for="cat2">Spor</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cat3" value="3" checked>
+                            <label for="cat3">Ekonomi</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cat4" value="4" checked>
+                            <label for="cat4">Sağlık</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cat5" value="5" checked>
+                            <label for="cat5">Teknoloji</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cat6" value="6" checked>
+                            <label for="cat6">Politika</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cat7" value="7" checked>
+                            <label for="cat7">Kültür</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-group">
+                    <label>⚡ Öncelikler</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="pri1" value="1" checked>
+                            <label for="pri1">Flaş</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="pri2" value="2" checked>
+                            <label for="pri2">Acil</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="pri3" value="3" checked>
+                            <label for="pri3">Önemli</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="pri4" value="4" checked>
+                            <label for="pri4">Rutin</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="pri5" value="5">
+                            <label for="pri5">Özel</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="pri6" value="6">
+                            <label for="pri6">Arşiv</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-group">
+                    <label>📄 İçerik Türleri</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="type1" value="1" checked>
+                            <label for="type1">Haber</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="type2" value="2" checked>
+                            <label for="type2">Fotoğraf</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="type3" value="3" checked>
+                            <label for="type3">Video</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-group">
+                    <label>📅 Tarih Aralığı</label>
+                    <input type="date" id="startDate" value="">
+                    <label style="margin-top: 10px;">Bitiş Tarihi</label>
+                    <input type="date" id="endDate" value="">
+                </div>
+
+                <div class="config-group">
+                    <label>🔍 Anahtar Kelime</label>
+                    <input type="text" id="keywords" placeholder="Anahtar kelime...">
+                    <label style="margin-top: 10px;">📊 Limit</label>
+                    <input type="number" id="limit" value="100" min="1" max="1000">
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Crawler Test -->
+        <div class="test-section">
+            <h2>🤖 Ultra Premium Crawler Testi</h2>
+            <p>Yapılandırılmış ayarlarla Ultra Premium AA Crawler'ı çalıştırın.</p>
+            <div style="margin-top: 15px;">
+                <button class="button" onclick="runUltraCrawler()">
+                    <span id="crawlerLoading" style="display: none;" class="loading"></span>
+                    🚀 Ultra Crawler Başlat
+                </button>
+                <button class="button success" onclick="testFirestoreIntegration()">
+                    <span id="firestoreLoading" style="display: none;" class="loading"></span>
+                    🔥 Firestore Test
+                </button>
+                <button class="button info" onclick="getNewsStats()">
+                    📊 İstatistikler
+                </button>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="test-section">
+            <h2>📊 Test Sonuçları</h2>
+            <div id="stats" class="stats-grid" style="display: none;">
+                <!-- Stats will be populated by JavaScript -->
+            </div>
+            <div id="result" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Set default dates
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        document.getElementById('startDate').value = yesterday.toISOString().split('T')[0];
+        document.getElementById('endDate').value = today.toISOString().split('T')[0];
+
+        function showResult(data, type = 'info') {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.className = `result ${type}`;
+            resultDiv.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+        }
+
+        function showStats(stats) {
+            const statsDiv = document.getElementById('stats');
+            statsDiv.style.display = 'grid';
+            statsDiv.innerHTML = `
+                <div class="stat-card">
+                    <h3>${stats.totalNews || 0}</h3>
+                    <p>Toplam Haber</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${stats.savedCount || 0}</h3>
+                    <p>Kaydedilen</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${stats.duplicateCount || 0}</h3>
+                    <p>Duplicate</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${stats.errorCount || 0}</h3>
+                    <p>Hata</p>
+                </div>
+            `;
+        }
+
+        function hideLoading(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function showLoading(id) {
+            document.getElementById(id).style.display = 'inline-block';
+        }
+
+        function getSelectedValues(prefix) {
+            const checkboxes = document.querySelectorAll(`input[id^="${prefix}"]:checked`);
+            return Array.from(checkboxes).map(cb => parseInt(cb.value));
+        }
+
+        function getConfig() {
+            return {
+                categories: getSelectedValues('cat'),
+                priorities: getSelectedValues('pri'),
+                types: getSelectedValues('type'),
+                startDate: document.getElementById('startDate').value,
+                endDate: document.getElementById('endDate').value,
+                keywords: document.getElementById('keywords').value,
+                limit: parseInt(document.getElementById('limit').value)
+            };
+        }
+
+        async function testAPIStatus() {
+            showLoading('statusLoading');
+            try {
+                const response = await fetch('/api/ultra-aa-crawler?action=status');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult({
+                        status: 'SUCCESS ✅',
+                        message: data.message,
+                        version: data.version,
+                        features: data.features,
+                        timestamp: data.timestamp
+                    }, 'success');
+                } else {
+                    showResult(data, 'error');
+                }
+            } catch (error) {
+                showResult(`API Status Test Error: ${error.message}`, 'error');
+            }
+            hideLoading('statusLoading');
+        }
+
+        async function debugAAAPI() {
+            showLoading('debugLoading');
+            try {
+                showResult('🧪 Detaylı AA API debug testi başlatılıyor...', 'info');
+                
+                const response = await fetch('/api/debug-aa');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult({
+                        status: 'DEBUG TEST SUCCESS ✅',
+                        message: data.message,
+                        basicTest: {
+                            status: data.tests.basic.status,
+                            success: data.tests.basic.success,
+                            resultCount: data.tests.basic.resultCount,
+                            totalResults: data.tests.basic.totalResults,
+                            sampleData: data.tests.basic.sampleData
+                        },
+                        categoryTest: {
+                            status: data.tests.category.status,
+                            success: data.tests.category.success,
+                            resultCount: data.tests.category.resultCount,
+                            totalResults: data.tests.category.totalResults
+                        },
+                        discoverTest: {
+                            status: data.tests.discover.status,
+                            success: data.tests.discover.success,
+                            dataKeys: data.tests.discover.dataKeys
+                        },
+                        credentials: data.credentials,
+                        timestamp: data.timestamp
+                    }, 'success');
+                } else {
+                    showResult({
+                        status: 'DEBUG TEST FAILED ❌',
+                        message: data.message,
+                        error: data.error,
+                        stack: data.stack,
+                        timestamp: data.timestamp
+                    }, 'error');
+                }
+            } catch (error) {
+                showResult(`Debug Test Error: ${error.message}`, 'error');
+            }
+            hideLoading('debugLoading');
+        }
+
+        async function simpleAATest() {
+            showLoading('simpleLoading');
+            try {
+                showResult('🔬 Simple AA API test başlatılıyor...', 'info');
+                
+                const testTypes = ['discover', 'news', 'categories', 'search-minimal'];
+                const results = {};
+                
+                for (const testType of testTypes) {
+                    try {
+                        showResult(`Testing ${testType}...`, 'info');
+                        
+                        const response = await fetch(`/api/aa-simple-test?type=${testType}`);
+                        const data = await response.json();
+                        
+                        results[testType] = {
+                            success: data.success,
+                            status: data.status,
+                            endpoint: data.endpoint,
+                            hasNews: data.hasNews,
+                            dataKeys: data.dataKeys,
+                            sampleData: data.data ? JSON.stringify(data.data).substring(0, 200) + '...' : null
+                        };
+                        
+                        if (data.success && data.hasNews) {
+                            showResult(`✅ ${testType} test: SUCCESS - Found news data!`, 'success');
+                            break; // Found working endpoint
+                        } else {
+                            showResult(`⚠️ ${testType} test: ${data.success ? 'Connected but no news' : 'Failed'}`, 'warning');
+                        }
+                    } catch (testError) {
+                        results[testType] = { error: testError.message };
+                        showResult(`❌ ${testType} test failed: ${testError.message}`, 'error');
+                    }
+                    
+                    // Short delay between tests
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+                
+                showResult({
+                    status: 'SIMPLE AA TEST COMPLETED 🔬',
+                    results,
+                    timestamp: new Date().toISOString()
+                }, 'info');
+                
+            } catch (error) {
+                showResult(`Simple Test Error: ${error.message}`, 'error');
+            }
+            hideLoading('simpleLoading');
+        }
+
+        async function testAAConnection() {
+            showLoading('connectionLoading');
+            try {
+                const response = await fetch('/api/ultra-aa-crawler?action=test');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult({
+                        status: 'AA CONNECTION SUCCESS ✅',
+                        message: data.message,
+                        apiStatus: data.apiStatus,
+                        testData: data.testData ? 'AA API Response Received' : 'No test data',
+                        timestamp: data.timestamp
+                    }, 'success');
+                } else {
+                    showResult({
+                        status: 'AA CONNECTION FAILED ❌',
+                        message: data.message,
+                        error: data.error,
+                        timestamp: data.timestamp
+                    }, 'error');
+                }
+            } catch (error) {
+                showResult(`AA Connection Test Error: ${error.message}`, 'error');
+            }
+            hideLoading('connectionLoading');
+        }
+
+        async function runUltraCrawler() {
+            showLoading('crawlerLoading');
+            try {
+                const config = getConfig();
+                
+                showResult('🚀 Ultra Premium Crawler başlatılıyor...', 'info');
+                
+                const response = await fetch('/api/ultra-aa-crawler', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ...config,
+                        languages: ['tr_TR'],
+                        saveToFirestore: true
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showStats({
+                        totalNews: data.stats?.totalNews,
+                        savedCount: data.saveResults?.savedCount,
+                        duplicateCount: data.saveResults?.duplicateCount,
+                        errorCount: data.saveResults?.errorCount
+                    });
+                    
+                    showResult({
+                        status: 'ULTRA CRAWLER SUCCESS ✅',
+                        message: data.message,
+                        stats: data.stats,
+                        saveResults: data.saveResults,
+                        errors: data.errors?.length > 0 ? data.errors : 'No errors',
+                        timestamp: data.timestamp
+                    }, 'success');
+                } else {
+                    showResult({
+                        status: 'ULTRA CRAWLER FAILED ❌',
+                        message: data.message,
+                        error: data.error,
+                        timestamp: data.timestamp
+                    }, 'error');
+                }
+            } catch (error) {
+                showResult(`Ultra Crawler Error: ${error.message}`, 'error');
+            }
+            hideLoading('crawlerLoading');
+        }
+
+        async function testFirestoreIntegration() {
+            showLoading('firestoreLoading');
+            try {
+                const response = await fetch('/api/ultra-news-manager?action=stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showStats({
+                        totalNews: data.stats.totalNews,
+                        savedCount: 'N/A',
+                        duplicateCount: 'N/A',
+                        errorCount: 0
+                    });
+                    
+                    showResult({
+                        status: 'FIRESTORE TEST SUCCESS ✅',
+                        message: 'Firestore connection successful',
+                        stats: data.stats,
+                        timestamp: data.timestamp
+                    }, 'success');
+                } else {
+                    showResult({
+                        status: 'FIRESTORE TEST FAILED ❌',
+                        message: data.message,
+                        error: data.error,
+                        timestamp: data.timestamp
+                    }, 'error');
+                }
+            } catch (error) {
+                showResult(`Firestore Test Error: ${error.message}`, 'error');
+            }
+            hideLoading('firestoreLoading');
+        }
+
+        async function getNewsStats() {
+            try {
+                const response = await fetch('/api/ultra-news-manager?action=stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showStats({
+                        totalNews: data.stats.totalNews,
+                        savedCount: 'Live Data',
+                        duplicateCount: 'N/A',
+                        errorCount: 0
+                    });
+                    
+                    showResult({
+                        status: 'NEWS STATS SUCCESS ✅',
+                        stats: data.stats,
+                        categoryCounts: data.stats.categoryCounts,
+                        priorityCounts: data.stats.priorityCounts,
+                        typeCounts: data.stats.typeCounts,
+                        lastUpdate: data.stats.lastUpdate,
+                        timestamp: data.timestamp
+                    }, 'success');
+                } else {
+                    showResult(data, 'error');
+                }
+            } catch (error) {
+                showResult(`News Stats Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            console.log('🚀 Ultra Premium AA Crawler Test Page Loaded');
+            testAPIStatus();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+// Direct Firestore Save Test
+async function testDirectSave() {
+  try {
+    console.log('🔍 Testing direct save to Firestore...');
+    
+    // Test with a sample news item
+    const testNewsItem = {
+      id: `test-news-${Date.now()}`,
+      title: "Test Haberi - Firestore Kaydı",
+      brief: "Bu test haberidir. Firestore kaydetme işlemini test ediyor.",
+      category: "test",
+      language: "tr",
+      type: "text",
+      priority: 1,
+      publishedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      source: "Test",
+      url: "https://test.com/news"
+    };
+    
+    const response = await fetch('/api/test-firestore-save', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(testNewsItem)
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      console.log('✅ Direct save test successful:', result);
+    } else {
+      console.error('❌ Direct save test failed:', response.statusText);
+    }
+    
+  } catch (error) {
+    console.error('❌ Direct save test error:', error);
+  }
+}
+
+testDirectSave();

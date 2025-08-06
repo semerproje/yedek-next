@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AA API Enhanced Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1f2937;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+        .test-button {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 10px;
+            transition: transform 0.2s;
+        }
+        .test-button:hover {
+            transform: translateY(-1px);
+        }
+        .test-button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .status.loading {
+            background: #dbeafe;
+            border: 1px solid #3b82f6;
+            color: #1e40af;
+        }
+        .status.success {
+            background: #dcfce7;
+            border: 1px solid #16a34a;
+            color: #15803d;
+        }
+        .status.error {
+            background: #fee2e2;
+            border: 1px solid #dc2626;
+            color: #dc2626;
+        }
+        .results {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .api-info {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .api-info h3 {
+            color: #1e40af;
+            margin-top: 0;
+        }
+        .api-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .api-info li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 AA API Enhanced Test Arayüzü</h1>
+        
+        <div class="api-info">
+            <h3>📋 Test Edilecek AA API Fonksiyonları (Kılavuz Uyumlu)</h3>
+            <ul>
+                <li><strong>discover</strong> - Kategori/öncelik kodlarını getir</li>
+                <li><strong>subscription</strong> - Abonelik bilgilerini kontrol et</li>
+                <li><strong>search</strong> - Filtrelenmiş haber araması</li>
+                <li><strong>getLatestNews</strong> - Son 24 saatin haberleri</li>
+                <li><strong>saveToFirebase</strong> - Firebase entegrasyonu</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 Hızlı Test</h3>
+            <button class="test-button" onclick="runFullTest()" id="fullTestBtn">
+                🔄 Tam Test Çalıştır
+            </button>
+            <button class="test-button" onclick="runDiscoverTest()" id="discoverBtn">
+                🔍 Discover API Test
+            </button>
+            <button class="test-button" onclick="runSubscriptionTest()" id="subscriptionBtn">
+                📋 Subscription Test
+            </button>
+            <button class="test-button" onclick="runLatestNewsTest()" id="newsBtn">
+                📰 Latest News Test
+            </button>
+        </div>
+
+        <div id="status" class="status" style="display: none;"></div>
+        <div id="results" class="results" style="display: none;"></div>
+    </div>
+
+    <script src="/aa-test-console.js"></script>
+    <script>
+        // AA API Enhanced Service için mock implementation
+        const AA_CATEGORY_CODES = {
+            '1': 'Genel',
+            '2': 'Spor', 
+            '3': 'Ekonomi',
+            '4': 'Sağlık',
+            '5': 'Bilim-Teknoloji',
+            '6': 'Politika',
+            '7': 'Kültür-Sanat-Yaşam'
+        };
+
+        const DEFAULT_AA_CREDENTIALS = {
+            username: '3010229',
+            password: '8vWhT6Vt',
+            baseUrl: 'https://api.aa.com.tr/abone'
+        };
+
+        function showStatus(message, type = 'loading') {
+            const statusEl = document.getElementById('status');
+            statusEl.className = `status ${type}`;
+            statusEl.textContent = message;
+            statusEl.style.display = 'block';
+        }
+
+        function showResults(data) {
+            const resultsEl = document.getElementById('results');
+            resultsEl.textContent = JSON.stringify(data, null, 2);
+            resultsEl.style.display = 'block';
+        }
+
+        function showStatus(message, type = 'loading') {
+            const statusEl = document.getElementById('status');
+            statusEl.className = `status ${type}`;
+            statusEl.textContent = message;
+            statusEl.style.display = 'block';
+        }
+
+        function showResults(data) {
+            const resultsEl = document.getElementById('results');
+            resultsEl.textContent = JSON.stringify(data, null, 2);
+            resultsEl.style.display = 'block';
+        }
+
+        async function waitForRateLimit() {
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
+
+        async function testDiscover() {
+            await waitForRateLimit();
+            
+            const response = await fetch('/api/aa-proxy', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'discover',
+                    params: { language: 'tr_TR' }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Discover API hatası: ${response.status} ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            
+            if (!result.success) {
+                throw new Error(result.error || 'Discover API hatası');
+            }
+
+            return result.data;
+        }
+
+        async function testSubscription() {
+            await waitForRateLimit();
+            
+            const response = await fetch('/api/aa-proxy', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'subscription'
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Subscription API hatası: ${response.status} ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            
+            if (!result.success) {
+                throw new Error(result.error || 'Subscription API hatası');
+            }
+
+            return result.data;
+        }
+
+        async function testSearch() {
+            await waitForRateLimit();
+            
+            const now = new Date();
+            const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+            
+            const searchParams = {
+                start_date: yesterday.toISOString(),
+                end_date: 'NOW',
+                filter_type: '1', // Sadece haber metinleri
+                filter_language: '1', // Türkçe
+                limit: 5,
+                offset: 0
+            };
+            
+            const response = await fetch('/api/aa-proxy', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'search',
+                    params: searchParams
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Search API hatası: ${response.status} ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            
+            if (!result.success) {
+                throw new Error(result.error || 'Search API hatası');
+            }
+
+            return result.data;
+        }
+
+        async function runDiscoverTest() {
+            const btn = document.getElementById('discoverBtn');
+            btn.disabled = true;
+            
+            try {
+                showStatus('🔍 Discover API test ediliyor...', 'loading');
+                const result = await testDiscover();
+                showStatus('✅ Discover API testi başarılı!', 'success');
+                showResults(result);
+            } catch (error) {
+                showStatus(`❌ Discover API hatası: ${error.message}`, 'error');
+                showResults({ error: error.message });
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function runSubscriptionTest() {
+            const btn = document.getElementById('subscriptionBtn');
+            btn.disabled = true;
+            
+            try {
+                showStatus('📋 Subscription API test ediliyor...', 'loading');
+                const result = await testSubscription();
+                showStatus('✅ Subscription API testi başarılı!', 'success');
+                showResults(result);
+            } catch (error) {
+                showStatus(`❌ Subscription API hatası: ${error.message}`, 'error');
+                showResults({ error: error.message });
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function runLatestNewsTest() {
+            const btn = document.getElementById('newsBtn');
+            btn.disabled = true;
+            
+            try {
+                showStatus('📰 Latest News API test ediliyor...', 'loading');
+                const result = await testSearch();
+                showStatus(`✅ Latest News API testi başarılı! ${result.documents?.length || 0} haber bulundu.`, 'success');
+                showResults(result);
+            } catch (error) {
+                showStatus(`❌ Latest News API hatası: ${error.message}`, 'error');
+                showResults({ error: error.message });
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function runFullTest() {
+            const btn = document.getElementById('fullTestBtn');
+            btn.disabled = true;
+            
+            try {
+                showStatus('🚀 Tam test başlatılıyor...', 'loading');
+                
+                const results = {};
+                
+                // 1. Discover Test
+                showStatus('1/3 - Discover API test ediliyor...', 'loading');
+                results.discover = await testDiscover();
+                
+                // 2. Subscription Test  
+                showStatus('2/3 - Subscription API test ediliyor...', 'loading');
+                results.subscription = await testSubscription();
+                
+                // 3. Search Test
+                showStatus('3/3 - Search API test ediliyor...', 'loading');
+                results.search = await testSearch();
+                
+                showStatus('🎉 Tüm testler başarıyla tamamlandı!', 'success');
+                showResults({
+                    summary: {
+                        total_tests: 3,
+                        all_passed: true,
+                        discover_categories: results.discover?.category?.length || 0,
+                        subscription_packages: results.subscription?.package?.length || 0,
+                        latest_news_count: results.search?.documents?.length || 0
+                    },
+                    detailed_results: results
+                });
+                
+            } catch (error) {
+                showStatus(`❌ Test hatası: ${error.message}`, 'error');
+                showResults({ error: error.message });
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // Sayfa yüklendiğinde bilgi göster
+        window.addEventListener('load', () => {
+            showStatus('🟢 AA API Enhanced Test arayüzü hazır. Test butonlarını kullanarak başlayın.', 'success');
+        });
+    </script>
+</body>
+</html>

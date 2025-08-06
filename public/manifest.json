@@ -1,0 +1,79 @@
+{
+  "name": "NetNext Haber",
+  "short_name": "NetNext",
+  "description": "Güncel haberler ve son dakika gelişmeleri",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1f2937",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "tr",
+  "categories": ["news", "entertainment", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop.png",
+      "type": "image/png",
+      "sizes": "1280x720",
+      "platform": "wide"
+    },
+    {
+      "src": "/screenshots/mobile.png", 
+      "type": "image/png",
+      "sizes": "375x812",
+      "platform": "narrow"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg", 
+      "sizes": "32x32",
+      "type": "image/svg+xml"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Son Dakika",
+      "short_name": "Son Dakika",
+      "description": "Son dakika haberlerini görüntüle",
+      "url": "/breaking",
+      "icons": [{ "src": "/icons/breaking-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Spor",
+      "short_name": "Spor", 
+      "description": "Spor haberlerini görüntüle",
+      "url": "/category/spor",
+      "icons": [{ "src": "/icons/sports-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Ekonomi",
+      "short_name": "Ekonomi",
+      "description": "Ekonomi haberlerini görüntüle", 
+      "url": "/category/ekonomi",
+      "icons": [{ "src": "/icons/economy-96x96.png", "sizes": "96x96" }]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text", 
+      "url": "url"
+    }
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
+}

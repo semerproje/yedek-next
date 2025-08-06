@@ -1,0 +1,5 @@
+<svg width="144" height="144" viewBox="0 0 144 144" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="144" height="144" rx="20" fill="#1f2937"/>
+  <path d="M72 36C54 36 40 50 40 68V76C40 94 54 108 72 108C90 108 104 94 104 76V68C104 50 90 36 72 36Z" fill="white"/>
+  <text x="72" y="85" text-anchor="middle" fill="#1f2937" font-size="24" font-weight="bold" font-family="Arial">N</text>
+</svg>
