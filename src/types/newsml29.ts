@@ -76,7 +76,8 @@ export interface NewsML29Creator {
 }
 
 export interface NewsML29Contributor extends NewsML29Creator {
-  // Additional contributor-specific properties can be added here
+  // Contributor might have additional role information
+  role?: string;
 }
 
 export interface NewsML29Audience {
