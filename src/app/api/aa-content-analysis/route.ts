@@ -9,7 +9,17 @@ export async function GET() {
     const aaNewsQuery = query(collection(db, 'aa_news'));
     const snapshot = await getDocs(aaNewsQuery);
     
-    const typeAnalysis = {};
+    const typeAnalysis: Record<string, {
+      count: number;
+      samples: Array<{
+        id: string;
+        title: string;
+        has_content: boolean;
+        has_summary: boolean;
+        content_length: number;
+        summary_length: number;
+      }>;
+    }> = {};
     const contentAnalysis = {
       with_content: 0,
       without_content: 0,

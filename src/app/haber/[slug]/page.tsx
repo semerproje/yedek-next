@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { ultraPremiumAAService } from '@/services/ultraPremiumAAService';
+import ultraPremiumAAService from '@/services/ultraPremiumAAService';
 import Image from 'next/image';
 import Link from 'next/link';
 

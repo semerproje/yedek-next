@@ -15,7 +15,13 @@ export async function GET() {
     
     const snapshot = await getDocs(aaNewsQuery);
     
-    const analysis = {
+    const analysis: {
+      total: number;
+      with_content: number;
+      without_content: number;
+      by_type: Record<string, { total: number; with_content: number }>;
+      news: any[];
+    } = {
       total: snapshot.size,
       with_content: 0,
       without_content: 0,

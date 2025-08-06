@@ -42,7 +42,7 @@ export async function POST(request: Request) {
         // 1. Content extraction
         let finalContent = '';
         let finalSummary = '';
-        let extractedPhotos = [];
+        let extractedPhotos: string[] = [];
 
         const newsmlContent = await ultraPremiumAAService.getDocument(rawNews.id, 'newsml29');
         
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
             if (photoSearchResponse.ok) {
               const photoData = await photoSearchResponse.json();
               if (photoData.success && photoData.photos.length > 0) {
-                finalPhotos = photoData.photos.map(p => p.primary_url);
+                finalPhotos = photoData.photos.map((p: any) => p.primary_url);
                 photosAddedCount++;
                 console.log(`📸 ${photoData.photos.length} fotoğraf eklendi`);
               }
@@ -340,7 +340,7 @@ function generateFallbackSummary(rawNews: any): string {
 }
 
 function getCategoryName(categoryId: number): string {
-  const categories = {
+  const categories: Record<number, string> = {
     1: 'Gündem',
     2: 'Spor', 
     3: 'Ekonomi',

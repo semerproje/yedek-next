@@ -138,7 +138,7 @@ async function performHealthCheck() {
 
     // Check AA API
     try {
-      const { ultraPremiumAAService } = await import('@/services/ultraPremiumAAService');
+      const ultraPremiumAAService = (await import('@/services/ultraPremiumAAService')).default;
       const testResult = await ultraPremiumAAService.testConnection();
       healthReport.services.aa_api = testResult.success;
       if (!testResult.success && testResult.data) {

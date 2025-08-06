@@ -55,7 +55,15 @@ async function getNews(searchParams: NewsListPageProps['searchParams']) {
     });
 
     return {
-      news: news.slice(0, limit),
+      news: news.slice(0, limit).map((item: any) => ({
+        ...item,
+        published_date: item.published_at ? new Date(item.published_at) : new Date(),
+        images: item.images || [],
+        tags: item.tags || [],
+        author: item.author || 'AA',
+        ai_enhanced: item.ai_enhanced || false,
+        status: item.status || 'published'
+      })),
       total: totalNews.length,
       currentPage: page,
       totalPages: Math.ceil(totalNews.length / limit),
