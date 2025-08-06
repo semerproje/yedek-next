@@ -75,7 +75,10 @@ export interface NewsML29Creator {
   org?: string;
 }
 
-export interface NewsML29Contributor extends NewsML29Creator {}
+export interface NewsML29Contributor extends NewsML29Creator {
+  // Contributor might have additional role information
+  role?: string;
+}
 
 export interface NewsML29Audience {
   significance: 'significant' | 'moderate' | 'low';

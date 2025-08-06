@@ -1,15 +1,16 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+// import { Inter } from 'next/font/google';
 import './globals.css';
 import { WebVitals } from '@/components/analytics/WebVitals';
 import { Toaster } from 'sonner';
 import { ToastProvider, ToastViewport } from '@/components/ui/toast';
 
-const inter = Inter({ 
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter'
-});
+// Temporarily using system fonts due to network issues
+// const inter = Inter({ 
+//   subsets: ['latin'],
+//   display: 'swap',
+//   variable: '--font-inter'
+// });
 
 export const metadata: Metadata = {
   title: {
@@ -101,7 +102,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={inter.className}>
+      <body className="font-sans">
         <ToastProvider>
           {children}
           <WebVitals />
