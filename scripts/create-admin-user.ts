@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../lib/firebase'
+import { auth } from '../src/lib/firebase'
 
 async function createTestAdmin() {
   try {

@@ -554,7 +554,7 @@ export default function HomepageManagement() {
     }).slice(0, 50)
 
     const saveManualSelection = async () => {
-      if (module) {
+      if (moduleItem) {
         await updateModule(moduleId, { 
           manualNewsIds: selectedNewsIds,
           autoFetch: false 
@@ -567,7 +567,7 @@ export default function HomepageManagement() {
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-bold">Haber Seçimi - {module?.title}</h3>
+            <h3 className="text-xl font-bold">Haber Seçimi - {moduleItem?.title}</h3>
             <button
               onClick={() => setSelectedModule(null)}
               className="text-gray-500 hover:text-gray-700"
@@ -599,7 +599,7 @@ export default function HomepageManagement() {
           </div>
 
           <div className="mb-4 text-sm text-gray-600">
-            Seçili: {selectedNewsIds.length} / {module?.newsCount || 6} haber
+            Seçili: {selectedNewsIds.length} / {moduleItem?.newsCount || 6} haber
           </div>
 
           <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -612,7 +612,7 @@ export default function HomepageManagement() {
                 onClick={() => {
                   if (selectedNewsIds.includes(news.id)) {
                     setSelectedNewsIds(prev => prev.filter(id => id !== news.id))
-                  } else if (selectedNewsIds.length < (module?.newsCount || 6)) {
+                  } else if (selectedNewsIds.length < (moduleItem?.newsCount || 6)) {
                     setSelectedNewsIds(prev => [...prev, news.id])
                   }
                 }}
@@ -640,7 +640,11 @@ export default function HomepageManagement() {
                       {news.category}
                     </span>
                     <span>{news.author}</span>
-                    <span>{new Date(news.publishedAt?.seconds * 1000).toLocaleDateString('tr-TR')}</span>
+                    <span>{new Date(
+                      typeof news.publishedAt === 'object' && news.publishedAt !== null && 'seconds' in news.publishedAt 
+                        ? (news.publishedAt as any).seconds * 1000 
+                        : news.publishedAt
+                    ).toLocaleDateString('tr-TR')}</span>
                     <span>👁️ {news.views || 0}</span>
                   </div>
                 </div>
@@ -837,7 +841,11 @@ export default function HomepageManagement() {
                 </div>
 
                 <div className="mt-4 text-xs text-gray-500">
-                  Son güncelleme: {module.lastUpdated ? new Date(module.lastUpdated.seconds * 1000).toLocaleString('tr-TR') : 'Bilinmiyor'}
+                  Son güncelleme: {module.lastUpdated ? new Date(
+                    typeof module.lastUpdated === 'object' && module.lastUpdated !== null && 'seconds' in module.lastUpdated 
+                      ? (module.lastUpdated as any).seconds * 1000 
+                      : module.lastUpdated
+                  ).toLocaleString('tr-TR') : 'Bilinmiyor'}
                 </div>
               </div>
             ))}
@@ -899,7 +907,11 @@ export default function HomepageManagement() {
                         </div>
                         <div className="flex items-center gap-2">
                           <span>👁️ {news.views || 0}</span>
-                          <span>{new Date(news.publishedAt?.seconds * 1000).toLocaleDateString('tr-TR')}</span>
+                          <span>{new Date(
+                            typeof news.publishedAt === 'object' && news.publishedAt !== null && 'seconds' in news.publishedAt 
+                              ? (news.publishedAt as any).seconds * 1000 
+                              : news.publishedAt
+                          ).toLocaleDateString('tr-TR')}</span>
                         </div>
                       </div>
                     </div>

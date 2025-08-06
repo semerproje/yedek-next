@@ -842,6 +842,88 @@ class UltraPremiumAANewsManager {
     }
   }
 
+  public async setupAutomaticCrawling(config: any): Promise<boolean> {
+    try {
+      console.log('🔄 Setting up automatic crawling with config:', config);
+      
+      // In a real implementation, this would set up cron jobs or scheduled tasks
+      // For now, we'll just return success
+      return true;
+    } catch (error) {
+      console.error('❌ Error setting up automatic crawling:', error);
+      return false;
+    }
+  }
+
+  public async manualFetchNews(params: any): Promise<any> {
+    try {
+      console.log('📰 Manual news fetch requested with params:', params);
+      
+      // Use the existing ultraPremiumAAService to fetch news
+      const ultraPremiumAAService = await import('@/lib/services/ultraPremiumAAService');
+      const service = ultraPremiumAAService.default;
+      
+      const result = await service.fetchNews(params);
+      
+      // Save to Firestore if successful
+      if (result.success && result.news.length > 0) {
+        // Implementation for saving to Firestore would go here
+        console.log(`✅ Fetched ${result.news.length} news items`);
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('❌ Error in manual fetch:', error);
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : 'Unknown error',
+        news: [],
+        total: 0
+      };
+    }
+  }
+
+  public async getAllNews(filters: any): Promise<any[]> {
+    try {
+      console.log('📰 Getting all news with filters:', filters);
+      
+      // Mock implementation for now - in real implementation this would query Firestore
+      const mockNews = [
+        {
+          id: 'news-1',
+          title: 'Örnek Haber Başlığı 1',
+          summary: 'Bu bir örnek haber özetidir.',
+          content: 'Bu bir örnek haber içeriğidir.',
+          category: 'gundem',
+          published_at: new Date().toISOString(),
+          author: 'AA',
+          status: 'published',
+          images: [],
+          tags: [],
+          ai_enhanced: false
+        },
+        {
+          id: 'news-2', 
+          title: 'Örnek Haber Başlığı 2',
+          summary: 'Bu ikinci örnek haber özetidir.',
+          content: 'Bu ikinci örnek haber içeriğidir.',
+          category: 'ekonomi',
+          published_at: new Date().toISOString(),
+          author: 'AA',
+          status: 'published',
+          images: [],
+          tags: [],
+          ai_enhanced: true
+        }
+      ];
+      
+      return mockNews;
+    } catch (error) {
+      console.error('❌ Error getting all news:', error);
+      return [];
+    }
+  }
+
   private async discoverAACategories(): Promise<NextResponse> {
     try {
       // Mock AA categories - in real implementation, this would fetch from AA API

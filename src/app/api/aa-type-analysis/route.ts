@@ -17,7 +17,20 @@ export async function GET() {
     
     // 2. Farklı type kodları ile test arama yap
     const testTypes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    const typeResults = {};
+    const typeResults: Record<number, {
+      count: number;
+      sample?: {
+        id: string;
+        title: string;
+        type: number;
+        has_content: boolean;
+        has_summary: boolean;
+        content_length: number;
+        summary_length: number;
+      };
+      message?: string;
+      error?: string;
+    }> = {};
     
     for (const typeCode of testTypes) {
       try {
@@ -65,16 +78,17 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       discover_data: {
-        categories: discoverData.categories || [],
-        types: discoverData.types || [],
-        languages: discoverData.languages || [],
-        priorities: discoverData.priorities || []
+        categories: (discoverData as any)?.categories || [],
+        types: (discoverData as any)?.types || [],
+        languages: (discoverData as any)?.languages || [],
+        priorities: (discoverData as any)?.priorities || []
       },
       type_test_results: typeResults,
       recommendation: {
-        text_types: Object.keys(typeResults).filter(type => 
-          typeResults[type].sample?.has_content || typeResults[type].sample?.has_summary
-        ),
+        text_types: Object.keys(typeResults).filter(typeKey => {
+          const type = parseInt(typeKey);
+          return typeResults[type].sample?.has_content || typeResults[type].sample?.has_summary;
+        }),
         best_for_content: "Type kodları arasında content/summary içeren tipleri bulun"
       }
     });

@@ -36,10 +36,11 @@ export async function POST(request: Request) {
           has_newsml: !!newsmlContent,
           newsml_length: newsmlContent ? newsmlContent.length : 0,
           xml_structure: {},
-          content_found: null,
-          summary_found: null,
-          photos_found: [],
-          parsing_attempts: {}
+          content_found: null as string | null,
+          summary_found: null as string | null,
+          photos_found: [] as string[],
+          parsing_attempts: {} as Record<string, boolean>,
+          xml_sample: null as string | null
         };
         
         if (newsmlContent && typeof newsmlContent === 'string') {

@@ -42,7 +42,7 @@ export async function POST(request: Request) {
         // Fotoğrafın NewsML content'ini al
         const photoNewsML = await ultraPremiumAAService.getDocument(photo.id, 'newsml29');
         
-        let photoUrls = [];
+        let photoUrls: string[] = [];
         let caption = photo.title || '';
         let description = photo.summary || '';
 

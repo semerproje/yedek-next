@@ -41,7 +41,7 @@ export async function POST(request: Request) {
         // Enhanced content extraction
         let finalContent = '';
         let finalSummary = '';
-        let photoUrls = [];
+        let photoUrls: string[] = [];
 
         if (use_enhanced_parsing) {
           // NewsML document al
