@@ -1,10 +1,10 @@
 import WebsiteLayout from "@/components/layout/WebsiteLayout";
-import HomePageClient from "@/components/homepage/HomePageClient";
+import UltraPremiumHomepageRenderer from "@/components/homepage/UltraPremiumHomepageRenderer";
 
 export default function WebsiteHome() {
   return (
     <WebsiteLayout>
-      <HomePageClient />
+      <UltraPremiumHomepageRenderer />
     </WebsiteLayout>
   );
 }
