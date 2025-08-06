@@ -1,15 +1,11 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
 import { WebVitals } from '@/components/analytics/WebVitals';
 import { Toaster } from 'sonner';
 import { ToastProvider, ToastViewport } from '@/components/ui/toast';
 
-const inter = Inter({ 
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter'
-});
+// Use system fonts as fallback when Google Fonts is not available
+const fontClass = 'font-sans';
 
 export const metadata: Metadata = {
   title: {
@@ -101,7 +97,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={inter.className}>
+      <body className={fontClass}>
         <ToastProvider>
           {children}
           <WebVitals />
